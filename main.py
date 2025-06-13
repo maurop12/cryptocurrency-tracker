@@ -1,8 +1,9 @@
 import time
-from config import CRYPTO_NAMES, MENU_ITEMS, REFRESH_INTERVAL, LONG_PRESS_DURATION
+from config import CRYPTO_NAMES, MENU_ITEMS, REFRESH_INTERVAL, LONG_PRESS_DURATION, ALERT_CHECK_INTERVAL, ALERT_THRESHOLDS
 from api import fetch_crypto_data, get_historical_prices
 from display import display_crypto, display_logo, display_menu, clear_display, display_graph
 from buttons import button_pressed, BTN1_PIN, BTN2_PIN
+from email_alert import check_price_alert
 
 current_crypto_index = 0
 last_refresh_time = 0
@@ -19,6 +20,7 @@ current_graph_interval_index = 0
 in_menu_mode = False
 current_menu_index = 0
 display_on = True
+last_alert_check_time = 0
 
 try:
     price, change = fetch_crypto_data(current_crypto_index)
@@ -99,6 +101,11 @@ try:
             if display_states[current_display_state] == 'price':
                 price, change = fetch_crypto_data(current_crypto_index)
                 display_crypto(CRYPTO_NAMES[current_crypto_index], price, change)
+
+        if now - last_alert_check_time >= ALERT_CHECK_INTERVAL:
+            last_alert_check_time = now
+            for symbol, threshold in ALERT_THRESHOLDS.items():
+                check_price_alert(symbol, threshold)
 
         time.sleep(0.05)
 

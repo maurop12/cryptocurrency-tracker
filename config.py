@@ -25,3 +25,17 @@ BITMAP_FILES = [
     "bitmap_imgs/ada.PNG"
 ]
 COINCAP_SYMBOLS = ["bitcoin", "ethereum", "solana", "cardano"]
+
+SMTP_SERVER = 'smtp.gmail.com'
+SMTP_PORT = 587
+EMAIL_ADDRESS = 'sender@gmail.com'
+EMAIL_PASSWORD = 'pass'
+TO_EMAIL = 'recipient@gmail.com'
+
+ALERT_CHECK_INTERVAL = 300
+ALERT_THRESHOLDS = {
+    "bitcoin": 120000,
+    "ethereum": 4000,
+    "solana": 200,
+    "cardano": 2
+}
