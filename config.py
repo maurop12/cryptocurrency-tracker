@@ -24,3 +24,4 @@ BITMAP_FILES = [
     "bitmap_imgs/sol1.PNG",
     "bitmap_imgs/ada.PNG"
 ]
+COINCAP_SYMBOLS = ["bitcoin", "ethereum", "solana", "cardano"]
