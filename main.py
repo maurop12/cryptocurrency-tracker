@@ -1,7 +1,7 @@
 import time
 from config import CRYPTO_NAMES, MENU_ITEMS, REFRESH_INTERVAL, LONG_PRESS_DURATION, ALERT_CHECK_INTERVAL, ALERT_THRESHOLDS
 from api import fetch_crypto_data, get_historical_prices
-from display import display_crypto, display_logo, display_menu, clear_display, display_graph
+from display import display_crypto, display_logo, display_menu, clear_display, display_graph, prompt_pin
 from buttons import button_pressed, BTN1_PIN, BTN2_PIN
 from email_alert import check_price_alert
 
@@ -27,6 +27,11 @@ try:
     display_crypto(CRYPTO_NAMES[current_crypto_index], price, change)
     last_refresh_time = time.time()
 
+    if prompt_pin(current_crypto_index, CRYPTO_NAMES):
+        print("PIN correct, running main app...")
+    else:
+        print("PIN incorrect, exiting...")
+        exit()
     while True:
         now = time.time()
 

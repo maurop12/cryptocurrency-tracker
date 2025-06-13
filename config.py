@@ -39,3 +39,5 @@ ALERT_THRESHOLDS = {
     "solana": 200,
     "cardano": 2
 }
+
+PIN = "1234"

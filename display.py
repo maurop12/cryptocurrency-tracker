@@ -1,8 +1,9 @@
 from PIL import Image, ImageDraw, ImageFont
 from luma.core.interface.serial import i2c
 from luma.oled.device import ssd1306
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, OLED_I2C_ADDRESS, BITMAP_FILES, MENU_ITEMS
-from api import get_historical_prices
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, OLED_I2C_ADDRESS, BITMAP_FILES, MENU_ITEMS, PIN
+from api import get_historical_prices, fetch_crypto_data
+import time
 
 serial = i2c(port=1, address=OLED_I2C_ADDRESS)
 device = ssd1306(serial, width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
@@ -112,3 +113,37 @@ def display_graph(index, graph_intervals, current_graph_interval_index):
     draw.text((graph_left, graph_bottom + 2), min_text, font=font_labels, fill=255)
 
     device.display(img)
+
+def prompt_pin(current_crypto_index, CRYPTO_NAMES):
+    font = ImageFont.load_default()
+    input_pin = ""
+    attempts = 0
+    while attempts < 3:
+        img = Image.new("1", (SCREEN_WIDTH, SCREEN_HEIGHT))
+        draw = ImageDraw.Draw(img)
+        print_center(draw, "Enter PIN", 10, font)
+        print_center(draw, input_pin, 30, font)
+        print_center(draw, f"Attempts: {attempts+1}/3", 50, font)
+        device.display(img)
+        key = input("Enter PIN: ")
+        input_pin = key
+        if input_pin == PIN:
+            price, change = fetch_crypto_data(current_crypto_index)
+            display_crypto(CRYPTO_NAMES[current_crypto_index], price, change)
+            return True
+        else:
+            img = Image.new("1", (SCREEN_WIDTH, SCREEN_HEIGHT))
+            draw = ImageDraw.Draw(img)
+            print_center(draw, "Wrong PIN", 10, font)
+            print_center(draw, f"Attempts: {attempts+1}/3", 30, font)
+            device.display(img)
+            time.sleep(2)
+            input_pin = ""
+            attempts += 1
+    img = Image.new("1", (SCREEN_WIDTH, SCREEN_HEIGHT))
+    draw = ImageDraw.Draw(img)
+    print_center(draw, "Access denied", 10, font)
+    print_center(draw, "Exiting...", 30, font)
+    device.display(img)
+    time.sleep(2)
+    return False
