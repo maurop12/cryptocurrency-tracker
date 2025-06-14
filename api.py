@@ -1,6 +1,7 @@
 import requests
 import time
-from config import API_KEY, CRYPTO_URLS, COINCAP_SYMBOLS
+from config import CRYPTO_URLS, COINCAP_SYMBOLS
+from secrets import API_KEY
 
 def fetch_crypto_data(index):
     url = CRYPTO_URLS[index]

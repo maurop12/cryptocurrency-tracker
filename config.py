@@ -8,7 +8,6 @@ BTN2_PIN = 27
 REFRESH_INTERVAL = 10
 LONG_PRESS_DURATION = 0.9
 
-API_KEY = "API_KEY"
 CRYPTO_URLS = [
     "https://rest.coincap.io/v3/assets/bitcoin",
     "https://rest.coincap.io/v3/assets/ethereum",

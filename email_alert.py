@@ -1,8 +1,9 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from config import SMTP_SERVER, SMTP_PORT, EMAIL_ADDRESS, EMAIL_PASSWORD, TO_EMAIL, API_KEY
+from config import SMTP_SERVER, SMTP_PORT, EMAIL_ADDRESS, EMAIL_PASSWORD, TO_EMAIL
 import requests
+from secrets import API_KEY
 
 def send_email_alert(subject, body, to_email=TO_EMAIL):
     msg = MIMEMultipart()
