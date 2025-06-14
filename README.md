@@ -95,6 +95,7 @@ This project uses the [CoinCap API](https://coincap.io/) for real-time cryptocur
 - `requests` - HTTP requests for API calls
 - `RPi.GPIO` - Raspberry Pi GPIO control
 - `Pillow` - Image processing for OLED display
+- `luma.core` - Core library for display device support and graphics operations 
 - `luma.oled` - OLED display driver
 
 ## Contributing
