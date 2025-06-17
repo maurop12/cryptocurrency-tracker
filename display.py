@@ -1,10 +1,10 @@
 from PIL import Image, ImageDraw, ImageFont
 from luma.core.interface.serial import i2c
 from luma.oled.device import ssd1306
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, OLED_I2C_ADDRESS, BITMAP_FILES, MENU_ITEMS, PIN
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, OLED_I2C_ADDRESS, BITMAP_FILES, MENU_ITEMS, PIN, BTN2_PIN, BTN1_PIN
 from api import get_historical_prices, fetch_crypto_data
 import time
-
+from buttons import button_pressed
 serial = i2c(port=1, address=OLED_I2C_ADDRESS)
 device = ssd1306(serial, width=SCREEN_WIDTH, height=SCREEN_HEIGHT)
 
@@ -118,15 +118,30 @@ def prompt_pin(current_crypto_index, CRYPTO_NAMES):
     font = ImageFont.load_default()
     input_pin = ""
     attempts = 0
+    digits = "0123456789"
+    current_digit = 0
+
     while attempts < 3:
-        img = Image.new("1", (SCREEN_WIDTH, SCREEN_HEIGHT))
-        draw = ImageDraw.Draw(img)
-        print_center(draw, "Enter PIN", 10, font)
-        print_center(draw, input_pin, 30, font)
-        print_center(draw, f"Attempts: {attempts+1}/3", 50, font)
-        device.display(img)
-        key = input("Enter PIN: ")
-        input_pin = key
+        input_pin = ""
+        for pos in range(4):
+            digit_selected = False
+            while not digit_selected:
+                img = Image.new("1", (SCREEN_WIDTH, SCREEN_HEIGHT))
+                draw = ImageDraw.Draw(img)
+                print_center(draw, "Enter PIN", 10, font)
+                masked = "*" * len(input_pin) + digits[current_digit]
+                print_center(draw, masked, 30, font)
+                print_center(draw, f"Attempts: {attempts+1}/3", 50, font)
+                device.display(img)
+                if button_pressed(BTN1_PIN):
+                    current_digit = (current_digit + 1) % 10
+                    time.sleep(0.2)
+                if button_pressed(BTN2_PIN):
+                    input_pin += digits[current_digit]
+                    current_digit = 0
+                    digit_selected = True
+                    time.sleep(0.2)
+
         if input_pin == PIN:
             price, change = fetch_crypto_data(current_crypto_index)
             display_crypto(CRYPTO_NAMES[current_crypto_index], price, change)
@@ -137,13 +152,13 @@ def prompt_pin(current_crypto_index, CRYPTO_NAMES):
             print_center(draw, "Wrong PIN", 10, font)
             print_center(draw, f"Attempts: {attempts+1}/3", 30, font)
             device.display(img)
-            time.sleep(2)
-            input_pin = ""
+            time.sleep(1.5)
             attempts += 1
+
     img = Image.new("1", (SCREEN_WIDTH, SCREEN_HEIGHT))
     draw = ImageDraw.Draw(img)
     print_center(draw, "Access denied", 10, font)
     print_center(draw, "Exiting...", 30, font)
     device.display(img)
-    time.sleep(2)
+    time.sleep(1.5)
     return False

@@ -39,4 +39,4 @@ ALERT_THRESHOLDS = {
     "cardano": 2
 }
 
-PIN = "1234"
+PIN = "0000"
